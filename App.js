@@ -21,7 +21,9 @@ export default function App() {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator screenOptions={{
+          headerShown: false,
+        }} initialRouteName="Home">
           <Stack.Screen name="CalendarScreen" component={CalendarScreen} />
           <Stack.Screen name="AddEvent" component={AddEvent} />
         </Stack.Navigator>

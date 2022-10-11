@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {Agenda} from 'react-native-calendars';
 import RNCalendarEvents from 'react-native-calendar-events';
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
 const timeToString = time => {
   const date = new Date(time);
@@ -36,6 +37,7 @@ const CalenderView = props => {
       const newItems = {};
       data.forEach(key => {
         let datehere = timeToString(key?.endDate);
+        console.log("key value ", key)
         let item = [];
         if (newItems[datehere] == undefined) {
           item = [
@@ -80,7 +82,7 @@ const CalenderView = props => {
   };
 
   const _renderEmptyDate = (date) => {
-    return <View style={{height:20}}>
+    return <View style={{height:20, width:'100%', justifyContent:'center', alignItems:'center'}}>
       <Text>No Event</Text>
 
     </View>;
@@ -93,7 +95,7 @@ const CalenderView = props => {
           props.props.navigation.navigate('AddEvent', {time: dateSelected});
         }}
         style={styles.btn}>
-        <Text style={styles.text}>Add Event</Text>
+       <AntDesign name="plus" size={15} color="black" />
       </Pressable>
       <Agenda
         items={items}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Text,
   View,
@@ -6,17 +6,65 @@ import {
   TextInput,
   SafeAreaView,
   ScrollView,
+  Button,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import RNCalendarEvents from 'react-native-calendar-events';
 import DatePicker from 'react-native-date-picker';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const AddEvent = props => {
-  const [eventTitle, setEventTile] = React.useState('');
-  const [eventLocation, setEventLocation] = React.useState('');
-  const [date, setDate] = React.useState(new Date());
-  const [open, setOpen] = React.useState(false);
-  const [dateValue, setdateValue] = React.useState(props.route.params.time);
+
+
+ 
+
+
+
+
+
+
+
+  const [time, setTime] = useState();
+
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+
+  const handleConfirm = (date) => {
+      console.warn("A date has been picked: ", date);
+      hideDatePicker();
+    };
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+      };
+      const showDatePicker = () => {
+          setDatePickerVisibility(true);
+        };
+        
+        
+        const [eventTitle, setEventTile] = React.useState('');
+        const [eventLocation, setEventLocation] = React.useState('');
+        
+        // const [mode, setMode] = React.useState('date');
+        // const [show, setShow] = React.useState(false);
+        // const [text, setText] = React.useState('2022-10-11')
+        // const onChange = (event, selectDate) => {
+          //   const currentDate = selectDate || date;
+          //   setShow(Platform.OS === "android");
+          //   setDate(currentDate);
+          // }
+    
+          // let tempDate = new Date
+          
+          
+          
+          
+          
+          const [date, setDate] = React.useState(new Date());
+          const [open, setOpen] = React.useState(false);
+          const [dateValue, setdateValue] = React.useState(props.route.params.time);
   console.log('dateValue', dateValue);
   //Execute when component is loaded
   React.useEffect(() => {
@@ -37,7 +85,7 @@ console.log("newDate",newDate);
       calendarId: props.route.time,
       startDate: date.toISOString(),
       endDate: newDate.toISOString(),
-      location: dateValue,
+      location: "'" + date + ',' + time + "'"
     })
       .then(value => {
         console.log('Event Id--->', value);
@@ -78,6 +126,79 @@ console.log("newDate",newDate);
           </View>
         </View>
 
+
+
+        <View style={styles.datepickerView}>
+
+
+          
+        </View>
+
+
+        <View style={styles.datepickerView}>
+          <Button title="Show Date Picker" onPress={showDatePicker} />
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
+            value ={date}
+
+            // onChange={date}
+          />
+        </View>
+
+
+        
+        <View style={styles.timepickerView}>
+
+        <DatePicker
+          mode="time"
+          locale="en_GB" // Use "en_GB" here
+            date={new Date()}
+
+            value={time}
+            
+           
+          />
+        </View>
+
+
+
+        {/* <View style={styles.timepickerView}>
+          <Button onPress={displayTimepicker} title="Your Time Picker" />
+        </View>
+        {isDisplayDate && (
+          <DateTimePicker
+            value={mytime}
+            mode={displaymode}
+           
+            display="default"
+            onChange={changeSelectedDate}
+          />
+        )} */}
+
+
+        {/* <View style={styles.timepickerView}>
+
+        
+
+          <Button title="show time picker" onPress={showTimePicker} />
+       
+          <RNDateTimePicker
+            
+            isVisible={isTimePickerVisible}
+            onConfirm={handleConfirmTime}
+            onCancel={hideTimePicker}
+          
+            value={new Date()} mode="time" />
+          
+        </View>
+
+ */}
+
+       
+
     
 
         <TouchableOpacity
@@ -87,10 +208,10 @@ console.log("newDate",newDate);
             height: 72,
             justifyContent: 'center',
             alignSelf: 'center',
-            backgroundColor : '#088F8F',
-            borderRadius :5
+            backgroundColor: '#088F8F',
+            borderRadius: 5
           }}
-          onPress={() => createEvent()}>
+          onPress={() => { createEvent(setDate()), setTime() }}>
           <Text style={styles.textInputbtn}> Save Event </Text>
         </TouchableOpacity>
       </ScrollView>
@@ -99,6 +220,20 @@ console.log("newDate",newDate);
 };
 
 const styles = StyleSheet.create({
+  timepickerView: {
+
+    width: '100%', justifyContent: 'center',
+    alignItems: 'center',marginVertical:20
+
+
+  },
+  datepickerView: {
+    width: '100%', justifyContent: 'center',
+    alignItems: 'center',
+    height:60
+    
+
+  },
   container: {
     flex: 1,
     backgroundColor: '#f4f4fc',
