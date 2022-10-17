@@ -7,90 +7,99 @@ import {
   TouchableOpacity,
   StatusBar,
   Pressable,
+  Image
 } from 'react-native';
 import {Agenda} from 'react-native-calendars';
 import RNCalendarEvents from 'react-native-calendar-events';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import { NativeBaseProvider, VStack, Avatar } from 'native-base';
+import { useNavigation } from '@react-navigation/native';
 
-const timeToString = time => {
-  const date = new Date(time);
-  return date.toISOString().split('T')[0];
-};
+// const timeToString = time => {
+//   const date = new Date(time);
+//   return date.toISOString().split('T')[0];
+// };
 
-const CalenderView = props => {
-  const [items, setItems] = React.useState({});
+const CalenderView = (props) => {
 
-  const [dateSelected, setdateSelected] = React.useState(
-    moment().format('YYYY-MM-DD'),
-  );
+  const navigation = useNavigation()
+//   const [items, setItems] = React.useState({});
 
-  useEffect(() => {
-    props.props.navigation.addListener('focus', () => {
-      fetchEvent();
-    });
-    fetchEvent();
-  }, []);
+//   const [dateSelected, setdateSelected] = React.useState(
+//     moment().format('YYYY-MM-DD'),
+//   );
 
-  function fetchEvent() {
-    RNCalendarEvents.fetchAllEvents().then(data => {
-      console.log('Event Data-->here', data);
-      const newItems = {};
-      data.forEach(key => {
-        let datehere = timeToString(key?.endDate);
-        console.log("key value ", key)
-        let item = [];
-        if (newItems[datehere] == undefined) {
-          item = [
-            {
-              name: key?.title,
-              title: key?.endDate,
-              day: timeToString(key?.endDate),
-            },
-          ];
-        } else {
-          item = newItems[datehere].concat([
-            {
-              name: key?.title,
-              title: key?.endDate,
-              day: timeToString(key?.endDate),
-            },
-          ]);
-        }
-        newItems[datehere] = item;
-      });
+//   useEffect(() => {
+//     props.props.navigation.addListener('focus', () => {
+//       fetchEvent();
+//     });
+//     fetchEvent();
+//   }, []);
 
-      console.log('newItems', newItems);
-      setItems(newItems);
-    });
-  }
+  
 
-  const loadItems = day => {
-    setTimeout(() => {
-      fetchEvent();
-    }, 1000);
-  };
+  // function fetchEvent() {
+  //   RNCalendarEvents.fetchAllEvents().then(data => {
+  //     console.log('Event Data-->here', data);
+  //     const newItems = {};
+  //     data.forEach(key => {
+  //       let datehere = timeToString(key?.endDate);
+  //       console.log("key value ", key)
+  //       let item = [];
+  //       if (newItems[datehere] == undefined) {
+  //         item = [
+  //           {
+  //             name: key?.title,
+  //             title: key?.endDate,
+  //             day: timeToString(key?.endDate),
+  //           },
+  //         ];
+  //       } else {
+  //         item = newItems[datehere].concat([
+  //           {
+  //             name: key?.title,
+  //             title: key?.endDate,
+  //             day: timeToString(key?.endDate),
+  //           },
+  //         ]);
+  //       }
+  //       newItems[datehere] = item;
+  //     });
 
-  const renderItem = item => {
-    return (
-      <TouchableOpacity style={styles.item}>
-        <View>
-          <Text style={{color: 'black'}}>{item.day}</Text>
-          <Text style={{color: 'black'}}>{item.name}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  //     console.log('newItems', newItems);
+  //     setItems(newItems);
+  //   });
+  // }
 
-  const _renderEmptyDate = (date) => {
-    return <View style={{height:20, width:'100%', justifyContent:'center', alignItems:'center'}}>
-      <Text>No Event</Text>
+  // const loadItems = day => {
+  //   // setTimeout(() => {
+  //     fetchEvent();
+  //   // }, 1000);
+  // };
 
-    </View>;
-  };
+  // const renderItem = item => {
+  //   return (
+  //     <TouchableOpacity style={styles.item}>
+  //       <View>
+  //         <Text style={{color: 'black'}}>{item.day}</Text>
+  //         <Text style={{color: 'black'}}>{item.name}</Text>
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
+
+
+
+  // const _renderEmptyDate = (date) => {
+  //   return <View style={{height:20, width:'100%', justifyContent:'center', alignItems:'center'}}>
+  //     <Text>No event</Text>
+
+  //   </View>
+  // };
 
   return (
     <View style={styles.container}>
-      <Pressable
+      {/* <Pressable
         onPress={() => {
           props.props.navigation.navigate('AddEvent', {time: dateSelected});
         }}
@@ -104,7 +113,7 @@ const CalenderView = props => {
         refreshControl={null}
         showClosingKnob={true}
         scrollEnabled
-        dayLoading={false} 
+        dayLoading={true} 
         refreshing={false}
         renderItem={renderItem}
         renderEmptyData={_renderEmptyDate}
@@ -112,15 +121,88 @@ const CalenderView = props => {
         onDayPress={day => {
           setdateSelected(day?.dateString);
         }}
-      />
+      /> */}
       <StatusBar />
+
+
+      <View style={styles.headerView}>
+        <Text style={{ fontWeight: '700', fontSize: 24, color:'#9590A0'}}>Calender Event</Text>
+        <VStack space={2} alignItems="center">
+          <Avatar bg="lightBlue.400" source={{
+            uri: "https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+          }} size="md">
+            NB
+            <Avatar.Badge bg="green.500" />
+          </Avatar>
+          </VStack>
+
+      </View>
+
+      <View style={{ width: '100%', paddingHorizontal: 20, marginTop: 20, flexDirection: 'row', justifyContent: "flex-end", }}>
+        <TouchableOpacity style={{height:40, width:60, borderWidth:1, borderColor:'white', justifyContent:'center', alignItems:'center', borderRadius:10}} onPress={()=> navigation.navigate('AddEvent')} >
+        
+          <AntDesign name="plus" color="white" size={20} />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.calenderView}>
+        <Text style={{color:'white'}}>Calender</Text>
+
+      </View>
+
+      <View style={styles.eventView}>
+        <Text style={{ color:'#9590A0', fontWeight:'500', fontSize:16 }}>
+          8:30 AM
+        </Text>
+
+        <Text style={{ color: 'white',fontSize:24, fontFamily:'500' }}>
+          Take Ellie for walk</Text>
+      </View>
+
+      
+      <View style={styles.eventView}>
+        <Text style={{ color: '#9590A0', fontWeight: '500', fontSize: 16 }}>
+          8:30 AM
+        </Text>
+
+        <Text style={{ color: 'white', fontSize: 24, fontFamily: '500' }}>
+          Take Ellie for walk</Text>
+      </View>
+     
+
+
+
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  eventView: {
+    width: '100%', 
+    paddingHorizontal: 20,
+    marginTop:20
+
+
+  },
+  headerView: {
+    width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginTop: 20
+  },
+
+  calenderView: {
+    width: '92%',
+    height: 316, 
+    backgroundColor: '#000000', 
+    alignSelf: 'center', 
+    justifyContent: 'center',
+    alignItems: 'center', 
+    borderRadius: 10, 
+    marginTop:20
+
+  },
   container: {
+    width:'100%',
     flex: 1,
+    backgroundColor:'#2A2731'
   },
   item: {
     flex: 1,
@@ -144,4 +226,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CalenderView;
+export default () => {
+  return (
+    <NativeBaseProvider>
+      <CalenderView />
+    </NativeBaseProvider>
+  )
+}
