@@ -13,11 +13,9 @@ import {
 import RNCalendarEvents from "react-native-calendar-events";
 import DatePicker from "react-native-date-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const AddEvent = (props) => {
@@ -25,6 +23,7 @@ const AddEvent = (props) => {
   const [eventLocation, setEventLocation] = React.useState("");
   const [date, setDate] = React.useState(new Date());
   const [open, setOpen] = React.useState(false);
+  const [open1, setOpen1] = React.useState(false);
   const [dateValue, setDateValue] = React.useState("");
   const [timeValue, setTimeValue] = useState("");
 
@@ -39,32 +38,25 @@ const AddEvent = (props) => {
       });
   }, []);
 
-  const createEvent = () => {
+  const createEvent = async() => {
     const newDate = new Date(date);
     newDate.setHours(newDate.getHours() + 2);
     RNCalendarEvents.saveEvent(eventTitle, {
-      calendarId: "3",
+      calendarId: "1",
       startDate: date.toISOString(),
       endDate: newDate.toISOString(),
       location: eventLocation,
+      eventTitle: eventTitle,
     })
-      .then((value) => {
+      .then(async(value) => {
         console.log("Event Id--->", value);
         alert("Event created");
-        AsyncStorage.setItem("event", JSON.stringify(value));
-        props.navigation.navigate("CalenderView");
-
+        await AsyncStorage.setItem("event", eventTitle);
         props.navigation.pop();
       })
       .catch((error) => {
         console.log(" Did Not work Threw an error --->", error);
       });
-
-    // }).then((value) => {
-    //   console.log('Event Id--->', value);
-    // }).catch((error) => {
-    //   console.log(' Did Not work Threw an error --->', error)
-    // })
   };
 
   const fetchEvent = (eventId) => {
@@ -79,35 +71,9 @@ const AddEvent = (props) => {
     });
   };
 
-  // const storeData = async () => {
-  //   try {
-
-  //     const jsonValue = JSON.stringify(createEvent)
-  //     await AsyncStorage.setItem('@storage_key',jsonValue )
-  //     console.log("event save in asyncStorage", jsonValue);
-
-  //   } catch (e) {
-  //     // saving error
-  //   }
-  // }
-
-  // const getData = async () => {
-  //   try {
-  //     const jsonValue = await AsyncStorage.getItem('@storage_Key')
-  //     console.log('json value get', jsonValue)
-  //     if (value !== null) {
-  //       // value previously stored
-  //     }
-  //   } catch (e) {
-  //     // error reading value
-  //   }
-  // }
-
   return (
     <View style={styles.container}>
       <ScrollView>
-        {/* <Text style={styles.textInputtitle}> {props.route.params.time} </Text> */}
-
         <View
           style={{
             width: "100%",
@@ -125,8 +91,9 @@ const AddEvent = (props) => {
               backgroundColor: "#3C3844",
               borderRadius: 50,
             }}
+            onPress={() => props.navigation.goBack()}
           >
-            <Ionicons name="arrow-back" color="white" size={20} />
+            <Ionicons name="arrow-back" color="white" size={30} />
           </TouchableOpacity>
         </View>
         <View style={styles.mainContainer}>
@@ -164,14 +131,14 @@ const AddEvent = (props) => {
               width: "91%",
               backgroundColor: "black",
               height: 80,
-              justifyContent: "space-between",
+              justifyContent: "space-evenly",
               alignItems: "center",
               paddingHorizontal: 20,
               borderRadius: 15,
               flexDirection: "row",
             }}
           >
-            <TextInput
+            {/* <TextInput
               style={styles.textInput}
               placeholder="22/09/2022"
               placeholderTextColor="white"
@@ -179,13 +146,46 @@ const AddEvent = (props) => {
               onChangeText={(value) => {
                 setDateValue(value);
               }}
-
+            /> */}
+            <DatePicker
+              placeholder="Select Date"
+              mode="date"
+              placeholderTextColor="red"
+              modal
+              open={open}
+              date={date}
+              onConfirm={(date) => {
+                var currentdate = new Date(date);
+                var datetime =
+                  +currentdate.getDate() +
+                  "/" +
+                  (currentdate.getMonth() + 1) +
+                  "/" +
+                  currentdate.getFullYear();
+                setOpen(false);
+                setDate(date);
+                setDateValue(datetime.toString());
+              }}
+              minimumDate={new Date()}
+              onCancel={() => {
+                setOpen(false);
+              }}
             />
-
-            <FontAwesome name="calendar" size={25} color="#76A9FF" />
+            <TouchableOpacity
+              onPress={() => setOpen(true)}
+              style={{ marginLeft: 300 }}
+            >
+              <Feather name="calendar" size={30} color="#76A9FF" />
+            </TouchableOpacity>
+          </View>
+          <View style={{ position: "absolute", left: 30 }}>
+            <TextInput
+              style={styles.textInput}
+              value={dateValue ? dateValue : "Select Date"}
+              onChangeText={(value) => setDateValue(value)}
+            />
           </View>
         </View>
-
         <View
           style={{
             width: "100%",
@@ -207,60 +207,47 @@ const AddEvent = (props) => {
             <Text style={{ color: "#7A7585", fontSize: 14, fontWeight: "500" }}>
               Time
             </Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="12:00 AM"
-              placeholderTextColor="white"
-              value={timeValue}
-              onChangeText={(value) => {
-                setTimeValue(value)
+            <TouchableOpacity
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+              }}
+              onPress={() => setOpen1(true)}
+            >
+              <Ionicons name="time-outline" size={30} color="#76A9FF" />
+            </TouchableOpacity>
+            <DatePicker
+              placeholder="Select Time"
+              modal
+              mode="time"
+              open={open1}
+              date={date}
+              onConfirm={(time) => {
+                var currentdate = new Date(time);
+                var Time = currentdate.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+                setOpen1(false);
+                setDate(time);
+                setTimeValue(Time.toString());
+              }}
+              onCancel={() => {
+                setOpen1(false);
               }}
             />
-          </View>
-        </View>
-
-        {/* <View style={styles.mainContainer}>
-          <View style={styles.singleElement}>
-            <View style={styles.dateInputContainer}>
-              <TextInput value={dateValue} style={{color:'white'}} />
-
-              <TouchableOpacity
-                style={styles.dateIcon}
-                onPress={() => setOpen(true)}>
-                <Text style={{color:'white'}}> Select Date/Time </Text>
-              </TouchableOpacity>
-
-              <DatePicker
-
-                placeholderTextColor="White"
-                modal
-                open={open}
-                date={date}
-                onConfirm={date => {
-                  var currentdate = new Date(date);
-                  var datetime =
-                    +currentdate.getDate() +
-                    '/' +
-                    (currentdate.getMonth() + 1) +
-                    '/' +
-                    currentdate.getFullYear() +
-                    ' - ' +
-                    currentdate.getHours() +
-                    ':' +
-                    currentdate.getMinutes();
-
-                  setOpen(false);
-                  setDate(date);
-                  setdateValue(datetime.toString());
-                }}
-                minimumDate={new Date()}
-                onCancel={() => {
-                  setOpen(false);
+            <View style={{ position: "absolute", top: 30, left: 10 }}>
+              <TextInput
+                style={styles.textInput}
+                value={timeValue ? timeValue : "Select Time"}
+                onChangeText={(value) => {
+                  setTimeValue(value);
                 }}
               />
             </View>
           </View>
-        </View> */}
+        </View>
         <View
           style={{
             width: "100%",
@@ -288,102 +275,6 @@ const AddEvent = (props) => {
         </View>
       </ScrollView>
     </View>
-
-    //     <View style={styles.container}>
-    //       <ScrollView>
-    //         <Text style={styles.textInputtitle}> {props.route.params.time} </Text>
-
-    //         <View style={styles.mainContainer}>
-    //           <View style={styles.singleElement}>
-    //             <View style={styles.textInputContainer}>
-    //               <TextInput
-    //                 style={styles.textInput}
-    //                 placeholder="Enter Event Title"
-    //                 placeholderTextColor={'grey'}
-    //                 value={eventTitle}
-    //                 onChangeText={value => {
-    //                   setEventTile(value);
-    //                 }}
-    //               />
-    //             </View>
-    //           </View>
-    //         </View>
-
-    //         <View style={styles.datepickerView}>
-
-    //         </View>
-
-    //         <View style={styles.datepickerView}>
-    //           <Button title="Show Date Picker" onPress={showDatePicker} />
-    //           <DateTimePickerModal
-    //             isVisible={isDatePickerVisible}
-    //             mode="date"
-    //             onConfirm={handleConfirm}
-    //             onCancel={hideDatePicker}
-    //             value={dateValue}
-
-    //           // onChange={date}
-    //           />
-    //         </View>
-
-    //         <View style={styles.timepickerView}>
-
-    //           <DatePicker
-    //             mode="time"
-    //             locale="en_GB" // Use "en_GB" here
-    //             date={new Date()}
-    //             onDateChange={(e) => {
-    //               console.log("E : ", e);
-    //             }}
-    //             value={time}
-
-    //           />
-    //         </View>
-
-    //         {/* <View style={styles.timepickerView}>
-    //           <Button onPress={displayTimepicker} title="Your Time Picker" />
-    //         </View>
-    //         {isDisplayDate && (
-    //           <DateTimePicker
-    //             value={mytime}
-    //             mode={displaymode}
-
-    //             display="default"
-    //             onChange={changeSelectedDate}
-    //           />
-    //         )} */}
-
-    //         {/* <View style={styles.timepickerView}>
-
-    //           <Button title="show time picker" onPress={showTimePicker} />
-
-    //           <RNDateTimePicker
-
-    //             isVisible={isTimePickerVisible}
-    //             onConfirm={handleConfirmTime}
-    //             onCancel={hideTimePicker}
-
-    //             value={new Date()} mode="time" />
-
-    //         </View>
-
-    //  */}
-
-    //         <TouchableOpacity
-    //           style={{
-    //             flex: 2,
-    //             padding: 25,
-    //             height: 72,
-    //             justifyContent: 'center',
-    //             alignSelf: 'center',
-    //             backgroundColor: '#088F8F',
-    //             borderRadius: 5
-    //           }}
-    //           onPress={() => { createEvent(setDate()), setTime() }}>
-    //           <Text style={styles.textInputbtn}> Save Event </Text>
-    //         </TouchableOpacity>
-    //       </ScrollView>
-    //     </View>
   );
 };
 

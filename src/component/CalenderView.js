@@ -23,7 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CalenderView = (props) => {
   const navigation = useNavigation();
-  const [data, setData] = useState([]);
+  const [Data, setData] = useState([]);
   //   const [items, setItems] = React.useState({});
 
   //   const [dateSelected, setdateSelected] = React.useState(
@@ -93,12 +93,21 @@ const CalenderView = (props) => {
 
   //   </View>
   // };
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("event");
+      return jsonValue
+    } catch (e) {
+    console.log(e)
+    }
+  };
   useEffect(() => {
-    AsyncStorage.getItem("event").then((data) => {
-      console.log("data", data);
+    getData().then((data) => {
       setData(data);
     });
   }, []);
+
+
 
   return (
     <View style={styles.container}>
@@ -182,34 +191,30 @@ const CalenderView = (props) => {
         <Text style={{ color: "white", fontSize: 24, fontFamily: "500" }}>
           Take Ellie for walk
         </Text>
-      </View>
+      </View> */}
+      {Data ? (
+        <View style={styles.eventView}>
+          <Text style={{ color: "#9590A0", fontWeight: "500", fontSize: 16 }}>
+            8:30 AM
+          </Text>
+
+          <Text style={{ color: "white", fontSize: 24, fontFamily: "500" }}>
+            {Data}
+          </Text>
+        </View>
+      ) : null}
 
       <View style={styles.eventView}>
         <Text style={{ color: "#9590A0", fontWeight: "500", fontSize: 16 }}>
           8:30 AM
         </Text>
 
-        <Text style={{ color: "white", fontSize: 24, fontFamily: "500" }}>
+        <Text
+          style={{ color: "white", fontSize: 24, fontFamily: "500" }}
+        >
           Take Ellie for walk
         </Text>
-      </View> */}
-{/* {data} */}
-      {
-        data?.map((item, index) => {
-          return (
-            <View key={index} style={styles.eventView}>
-              <Text style={{ color: "#9590A0", fontWeight: "500", fontSize: 16 }}>
-                {item?.time}
-              </Text>
-
-              <Text style={{ color: "white", fontSize: 24, fontFamily: "500" }}>
-                {item?.title}
-              </Text>
-            </View>
-          );
-        })
-      }
-
+      </View>
     </View>
   );
 };
