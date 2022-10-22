@@ -60,18 +60,9 @@ LocaleConfig.defaultLocale = 'en';
 
 const CalendarScreen = props => {
 
-  useEffect(() => {
-    fetchEvent('3')
-  },[])
-  const fetchEvent = eventId => {
-    RNCalendarEvents.findEventById(eventId).then(data => {
-      console.log('Event Data-->', data);
-    });
-  };
-
+ 
   return (
     <View style={styles.container}>
-     
       <CalendarView props={props}  />
     </View>
   );

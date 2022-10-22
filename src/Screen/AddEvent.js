@@ -4,70 +4,34 @@ import {
   View,
   StyleSheet,
   TextInput,
-  SafeAreaView,
   ScrollView,
-  Button,
   TouchableOpacity,
-  Platform,
 } from "react-native";
-import RNCalendarEvents from "react-native-calendar-events";
 import DatePicker from "react-native-date-picker";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const AddEvent = (props) => {
   const [eventTitle, setEventTile] = React.useState("");
-  const [eventLocation, setEventLocation] = React.useState("");
   const [date, setDate] = React.useState(new Date());
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
   const [dateValue, setDateValue] = React.useState("");
   const [timeValue, setTimeValue] = useState("");
 
-  //Execute when component is loaded
-  React.useEffect(() => {
-    RNCalendarEvents.requestPermissions()
-      .then((res) => {
-        console.log("Premission Response", res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
-  const createEvent = async() => {
-    const newDate = new Date(date);
-    newDate.setHours(newDate.getHours() + 2);
-    RNCalendarEvents.saveEvent(eventTitle, {
-      calendarId: "1",
-      startDate: date.toISOString(),
-      endDate: newDate.toISOString(),
-      location: eventLocation,
-      eventTitle: eventTitle,
-    })
-      .then(async(value) => {
-        console.log("Event Id--->", value);
-        alert("Event created");
-        await AsyncStorage.setItem("event", eventTitle);
-        props.navigation.pop();
-      })
-      .catch((error) => {
-        console.log(" Did Not work Threw an error --->", error);
-      });
-  };
-
-  const fetchEvent = (eventId) => {
-    RNCalendarEvents.findEventById(eventId).then((data) => {
-      console.log("Event Data-->", data);
+  const createEvent = async () => {
+    let payload = JSON.stringify({
+      event: eventTitle,
+      date: dateValue,
+      time: timeValue,
     });
-  };
-
-  const deletEvent = (eventId) => {
-    RNCalendarEvents.removeEvent(eventId).then((val) => {
-      console.log(val); //returns true if event is delted
+    let val = dateValue + "," + timeValue;
+    await AsyncStorage.setItem(val.toString(), payload);
+    AsyncStorage.getItem(dateValue.toString()).then((value) => {
+      console.log("value", value);
+      alert("Event Saved Successfully!");
+      props.navigation.pop();
     });
   };
 
@@ -173,7 +137,7 @@ const AddEvent = (props) => {
             />
             <TouchableOpacity
               onPress={() => setOpen(true)}
-              style={{ marginLeft: 300 }}
+              style={{ marginLeft: 280 }}
             >
               <Feather name="calendar" size={30} color="#76A9FF" />
             </TouchableOpacity>
@@ -181,6 +145,7 @@ const AddEvent = (props) => {
           <View style={{ position: "absolute", left: 30 }}>
             <TextInput
               style={styles.textInput}
+              // editable={false}
               value={dateValue ? dateValue : "Select Date"}
               onChangeText={(value) => setDateValue(value)}
             />
