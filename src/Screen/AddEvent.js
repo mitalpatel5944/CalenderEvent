@@ -137,7 +137,7 @@ const AddEvent = (props) => {
             />
             <TouchableOpacity
               onPress={() => setOpen(true)}
-              style={{ marginLeft: 280 }}
+              style={{ marginLeft: 250 }}
             >
               <Feather name="calendar" size={30} color="#76A9FF" />
             </TouchableOpacity>

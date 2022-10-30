@@ -15,9 +15,11 @@ target 'CalenderEvent' do
     # Hermes is now enabled by default. Disable by setting this flag to false.
     # Upcoming versions of React Native may rely on get_default_flags(), but
     # we make it explicit here to aid in the React Native upgrade process.
-    :hermes_enabled => true,
+    :hermes_enabled => false,
     :fabric_enabled => flags[:fabric_enabled],
-    # Enables Flipper.
+   
+  
+   # Enables Flipper.
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
     # you should disable the next line.
@@ -25,6 +27,11 @@ target 'CalenderEvent' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
 
   target 'CalenderEventTests' do
     inherit! :complete

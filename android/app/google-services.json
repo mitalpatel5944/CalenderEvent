@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "729005262440",
+    "project_id": "vrinsoft-6e784",
+    "storage_bucket": "vrinsoft-6e784.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:729005262440:android:63647cf2381c6c1f625ddd",
+        "android_client_info": {
+          "package_name": "com.calenderevent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "729005262440-t20bijaun9b3i5agp2sd8ljssm5v8mvi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGwd_DNmaH5SccYKCEXadw2YV62Gr4zSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "729005262440-t20bijaun9b3i5agp2sd8ljssm5v8mvi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
