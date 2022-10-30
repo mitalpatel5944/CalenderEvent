@@ -73,7 +73,7 @@ const ChatScreen = (props) => {
 
   function renderTextInput() {
     return (
-      <View style={styles.row}>
+      <View style={[styles.row,{position : 'absolute',bottom :0}]}>
         <TextInput
           value={message}
           style={styles.TextInput}
@@ -95,11 +95,12 @@ const ChatScreen = (props) => {
 
   function renderbody() {
     return (
-      <View style={{ height: "75%" }}>
+    
         <FlatList
           data={messages.sort((a, b) => a.createdAt - b.createdAt)}
           ref={scrollViewRef}
-          style={{ height: "75%" }}
+          automaticallyAdjustKeyboardInsets
+          style={{ height: "auto",marginBottom :100 }}
           onContentSizeChange={() => scrollViewRef?.current?.scrollToEnd({animated: true})}
           renderItem={({ item, index }) => {
             console.log("item", item);
@@ -119,7 +120,7 @@ const ChatScreen = (props) => {
             );
           }}
         />
-      </View>
+    
     );
   }
 
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     fontSize: 20,
-    width: "90%",
+    width: "85%",
   },
   container: {
     flex: 1,
