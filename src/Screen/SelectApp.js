@@ -4,8 +4,26 @@ import { Text, View, StyleSheet, Pressable } from "react-native";
 const SelectApp = (props) => {
   return (
     <View style={styles.container}>
+      
       <Pressable
         style={styles.btn}
+        onPress={() => {
+          props.navigation.navigate("SelectCountry");
+        }}
+      >
+        <Text style={styles.btntxt}>Covid Data</Text>
+      </Pressable>
+      <Pressable
+        style={styles.btn2}
+        onPress={() => {
+          props.navigation.navigate("RatingScreen");
+        }}
+      >
+        <Text style={styles.btntxt}>Rating</Text>
+      </Pressable>
+
+      <Pressable
+        style={styles.btn2}
         onPress={() => {
           props.navigation.navigate("Login");
         }}
