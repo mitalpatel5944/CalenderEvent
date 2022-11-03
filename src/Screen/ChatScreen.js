@@ -73,7 +73,7 @@ const ChatScreen = (props) => {
 
   function renderTextInput() {
     return (
-      <View style={[styles.row,{position : 'absolute',bottom :0}]}>
+      <View style={[styles.row, { position: "absolute", bottom: 0 }]}>
         <TextInput
           value={message}
           style={styles.TextInput}
@@ -83,7 +83,9 @@ const ChatScreen = (props) => {
         />
         <Pressable
           onPress={() => {
-            handleSend(message);
+            if (message.length != 0) {
+              handleSend(message);
+            }
           }}
           style={{ padding: 15 }}
         >
@@ -95,32 +97,32 @@ const ChatScreen = (props) => {
 
   function renderbody() {
     return (
-    
-        <FlatList
-          data={messages.sort((a, b) => a.createdAt - b.createdAt)}
-          ref={scrollViewRef}
-          automaticallyAdjustKeyboardInsets
-          style={{ height: "auto",marginBottom :100 }}
-          onContentSizeChange={() => scrollViewRef?.current?.scrollToEnd({animated: true})}
-          renderItem={({ item, index }) => {
-            console.log("item", item);
-            return (
-              <View
-                style={
-                  item.user == props.route.params.user
-                    ? styles.right
-                    : styles.left
-                }
-              >
-                <Text style={styles.btntxt}>{item?.messages}</Text>
-                <Text style={styles.smallTxt}>
-                  {moment(item?.createdAt).format("HH:MM A")}
-                </Text>
-              </View>
-            );
-          }}
-        />
-    
+      <FlatList
+        data={messages.sort((a, b) => a.createdAt - b.createdAt)}
+        ref={scrollViewRef}
+        automaticallyAdjustKeyboardInsets
+        style={{ height: "auto", marginBottom: 100 }}
+        onContentSizeChange={() =>
+          scrollViewRef?.current?.scrollToEnd({ animated: true })
+        }
+        renderItem={({ item, index }) => {
+          console.log("item", item);
+          return (
+            <View
+              style={
+                item?.user == props.route.params?.user
+                  ? styles.right
+                  : styles.left
+              }
+            >
+              <Text style={styles.btntxt}>{item?.messages}</Text>
+              <Text style={styles.smallTxt}>
+                {moment(item?.createdAt).format("hh:mm a")}
+              </Text>
+            </View>
+          );
+        }}
+      />
     );
   }
 

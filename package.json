@@ -7,7 +7,9 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "androidBuild": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/ && cd android && ./gradlew assembleRelease && cd ..",
+    "androidBuildWithNoError": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/ && rm -rf android/app/src/main/res/drawable-* && rm -rf android/app/src/main/res/raw/* && cd android && ./gradlew assembleRelease && cd .."
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.10",
@@ -29,10 +31,9 @@
     "react-native-datepicker": "^1.7.2",
     "react-native-gesture-handler": "^2.7.0",
     "react-native-modal-datetime-picker": "^14.0.0",
-    "react-native-push-notification": "^8.1.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.18.0",
-    "react-native-svg": "^12.1.1",
+    "react-native-svg": "^13.4.0",
     "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {

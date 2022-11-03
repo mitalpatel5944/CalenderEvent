@@ -18,6 +18,7 @@ import SelectApp from "./src/Screen/SelectApp";
 import Login from "./src/Screen/Login";
 import HomeScreen from "./src/Screen/HomeScreen";
 import ChatScreen from "./src/Screen/ChatScreen";
+import SelectCountry from "./src/Screen/SelectCountry";
 
 const Stack = createNativeStackNavigator();
 
@@ -29,8 +30,10 @@ export default function App() {
           screenOptions={{
             headerShown: false,
           }}
-          initialRouteName="SelectApp"
+          initialRouteName="SelectCountry"
         >
+          <Stack.Screen name="SelectCountry" component={SelectCountry} />
+
           <Stack.Screen name="SelectApp" component={SelectApp} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
