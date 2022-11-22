@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "export ANDROID_HOME=/Users/mittal/Library/Android/sdk && react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
+    "keytool": "adb shell input keyevent 82",
     "androidBuild": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/ && cd android && ./gradlew assembleRelease && cd ..",
     "androidBuildWithNoError": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/ && rm -rf android/app/src/main/res/drawable-* && rm -rf android/app/src/main/res/raw/* && cd android && ./gradlew assembleRelease && cd .."
   },
@@ -17,6 +18,7 @@
     "@react-native-firebase/app": "^16.3.1",
     "@react-native-firebase/auth": "^16.3.1",
     "@react-native-firebase/firestore": "^16.3.1",
+    "@react-native-firebase/messaging": "^16.4.3",
     "@react-native-masked-view/masked-view": "^0.2.8",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.0",
@@ -31,10 +33,12 @@
     "react-native-datepicker": "^1.7.2",
     "react-native-gesture-handler": "^2.7.0",
     "react-native-modal-datetime-picker": "^14.0.0",
+    "react-native-pager-view": "^6.1.1",
     "react-native-ratings": "^8.1.0",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.18.0",
     "react-native-svg": "^13.4.0",
+    "react-native-tab-view": "^3.3.0",
     "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {

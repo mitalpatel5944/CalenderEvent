@@ -12,6 +12,9 @@ import {
 } from "react-native";
 import auth from "@react-native-firebase/auth";
 
+import firestore from "@react-native-firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const Login = (props) => {
   const [payload, setPayload] = useState({
     email: "",
@@ -20,15 +23,15 @@ const Login = (props) => {
 
   const [loading, setloading] = useState(false);
 
-  function oldLoginCall() {
+  async function oldLoginCall() {
     auth()
       .signInWithEmailAndPassword(payload.email, payload.pswd)
-      .then((response) => {
+      .then(async (response) => {
         setloading(false);
-
         console.log("User account signed in!", response);
         if (!response?.additionalUserInfo?.isNewUser) {
-          props.navigation.navigate("HomeScreen");
+          AsyncStorage.setItem('user', payload.email)
+          props.navigation.navigate("GetUserList");
         } else {
           alert("Something Went Wrong!");
         }
@@ -38,7 +41,7 @@ const Login = (props) => {
 
         if (error.code === "auth/email-already-in-use") {
           console.log("That email address is already in use!");
-          oldLoginCall();
+          // loginCall();
         }
 
         if (error.code === "auth/invalid-email") {
@@ -49,19 +52,42 @@ const Login = (props) => {
       });
   }
 
-  function loginCall() {
+  async function addUser() {
+    firestore().collection("USERS").doc().collection("INFO").add({
+      email: payload.email,
+      createdAt: new Date().getTime()
+    });
+
+    await firestore()
+      .collection("USERS")
+      .doc()
+      .set(
+        {
+          data: {
+            email: payload.email,
+            createdAt: new Date().getTime()
+          },
+        },
+        { merge: true }
+      );
+
+  }
+
+  async function loginCall() {
     if (payload.email.length == 0 || payload.pswd.length == 0) {
       return alert("Please fill all the detail!");
     }
     setloading(true);
     auth()
       .createUserWithEmailAndPassword(payload.email, payload.pswd)
-      .then((response) => {
+      .then(async (response) => {
         setloading(false);
         console.log("User account created & signed in!", response);
         if (response?.additionalUserInfo?.isNewUser) {
           alert("New user Register Successfully!");
-          props.navigation.navigate("HomeScreen");
+          addUser()
+          AsyncStorage.setItem('user', payload.email)
+          props.navigation.navigate("GetUserList");
         } else {
           alert("Something Went Wrong!");
         }

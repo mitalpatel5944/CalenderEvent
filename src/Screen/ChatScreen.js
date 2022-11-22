@@ -11,21 +11,34 @@ import moment from "moment";
 import firestore from "@react-native-firebase/firestore";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ChatScreen = (props) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState([]);
-
+  const [currentUser, setcurrentUser] = useState('')
   const thread = props.route.params.user;
-  const currentUser = props.route.params.user;
   const scrollViewRef = useRef();
 
   useEffect(() => {
+    getcurrentUSer()
+    getmessages()
+  }, []);
+
+
+  async function getcurrentUSer() {
+    AsyncStorage.getItem('user').then(val => {
+      setcurrentUser(val)
+    })
+  }
+
+  function getmessages() {
     const messagesListener = firestore()
       .collection("THREADS")
       .onSnapshot((querySnapshot) => {
-        console.log("querySnapshot", querySnapshot);
         const messages = querySnapshot.docs.map((doc) => doc.data().data);
+        console.log("querySnapshot===", messages, querySnapshot);
+
         setMessages(messages);
       });
     setTimeout(() => {
@@ -33,13 +46,14 @@ const ChatScreen = (props) => {
     }, 1000);
     // Stop listening for updates whenever the component unmounts
     return () => messagesListener();
-  }, []);
+  }
 
   async function handleSend(messages) {
     firestore().collection("THREADS").doc(thread).collection("MESSAGES").add({
       messages,
       createdAt: new Date().getTime(),
-      user: currentUser,
+      from: currentUser,
+      to: props.route.params.user
     });
 
     await firestore()
@@ -49,7 +63,8 @@ const ChatScreen = (props) => {
         {
           data: {
             messages,
-            user: currentUser,
+            from: currentUser,
+            to: props.route.params.user,
             createdAt: new Date().getTime(),
           },
         },
@@ -98,13 +113,16 @@ const ChatScreen = (props) => {
   function renderbody() {
     return (
       <FlatList
-        data={messages.sort((a, b) => a.createdAt - b.createdAt)}
+        data={messages.filter(e => e.to == thread).sort((a, b) => a.createdAt - b.createdAt)}
         ref={scrollViewRef}
         automaticallyAdjustKeyboardInsets
         style={{ height: "auto", marginBottom: 100 }}
         onContentSizeChange={() =>
           scrollViewRef?.current?.scrollToEnd({ animated: true })
         }
+        ListEmptyComponent={() => (
+          <Text style={styles.btntxtlabel}>No Messages!</Text>
+        )}
         renderItem={({ item, index }) => {
           console.log("item", item);
           return (
