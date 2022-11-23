@@ -71,7 +71,7 @@ const GetUserList = (props) => {
             .collection("GROUP")
             .onSnapshot((querySnapshot) => {
                 const messages = querySnapshot.docs.map((doc) => doc.data());
-                console.log("querySnapshot", messages);
+                console.log("getGroups", messages);
 
                 setgroups(messages);
             });
@@ -126,8 +126,8 @@ const GetUserList = (props) => {
                 return (
                     <Pressable
                         onPress={() => {
-                            // props.navigation.navigate("ChatScreen", { user: item.email });
-                            alert('working on that')
+                            props.navigation.navigate("ChatScreen", { user: item.name ,group : true,data : item});
+                            // alert('working on that')
                         }}
                         style={{ padding: 10 }}>
                         <Text style={{ color: 'black', fontSize: 18 }}>{item.name}</Text>

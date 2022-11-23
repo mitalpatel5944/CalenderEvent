@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import RNCalendarEvents from 'react-native-calendar-events';
 import DatePicker from 'react-native-date-picker';
-import {LocaleConfig} from 'react-native-calendars';
+import { LocaleConfig } from 'react-native-calendars';
 import CalendarView from '../component/CalenderView';
 
 LocaleConfig.locales['en'] = {
@@ -60,10 +60,10 @@ LocaleConfig.defaultLocale = 'en';
 
 const CalendarScreen = props => {
 
- 
+
   return (
     <View style={styles.container}>
-      <CalendarView props={props}  />
+      <CalendarView props={props} />
     </View>
   );
 };
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f4f4fc',
   },
-  
+
 });
 
 export default CalendarScreen;

@@ -76,12 +76,19 @@ const ChatScreen = (props) => {
 
   function renderHeader() {
     return (
-      <View style={styles.row}>
-        <Pressable onPress={() => props.navigation.pop()}>
-          <Ionicons name={"md-arrow-back"} color={"white"} size={30} />
+      <View style={styles.space}>
+        <View style={styles.row}>
+          <Pressable onPress={() => props.navigation.pop()}>
+            <Ionicons name={"md-arrow-back"} color={"white"} size={30} />
+          </Pressable>
+          <Text style={styles.btntxtlabel}>{props.route.params?.user}</Text>
+        </View>
+        <Pressable onPress={() => props.navigation.navigate('GroupDetail', { data: props.route.params.data })}
+          style={{ alignSelf: 'center', paddingRight: 20 }}
+        >
+          <Ionicons name={"information-circle"} color={"white"} size={30}
+          />
         </Pressable>
-        <Text style={styles.btntxtlabel}>{props.route.params?.user}</Text>
-        <View />
       </View>
     );
   }
@@ -157,6 +164,10 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     padding: 20,
+  },
+  space: {
+    flexDirection: "row",
+    justifyContent: 'space-between'
   },
   smallTxt: {
     color: "black",
