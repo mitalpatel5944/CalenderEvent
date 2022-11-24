@@ -52,22 +52,24 @@ const CreateGroup = (props) => {
 
     async function addGroup() {
 
-        firestore().collection("GROUP").add({
-            adminEmail: currentUser,
-            createdAt: new Date().getTime(),
-            members: selected,
-            name: groupName
-        });
+        // firestore().collection("GROUP").add({
+        //     adminEmail: currentUser,
+        //     createdAt: new Date().getTime(),
+        //     members: selected,
+        //     name: groupName,
+        //     chat: []
+        // });
 
         await firestore()
             .collection("GROUP")
-            .doc('123')
+            .doc(new Date().getTime() + 'group')
             .set(
                 {
                     adminEmail: currentUser,
                     createdAt: new Date().getTime(),
                     members: selected,
-                    name: groupName
+                    name: groupName,
+                    chat: []
                 },
                 { merge: true }
             );

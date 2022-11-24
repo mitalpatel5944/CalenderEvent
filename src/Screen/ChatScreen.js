@@ -48,6 +48,27 @@ const ChatScreen = (props) => {
     return () => messagesListener();
   }
 
+  async function handleGroupSend() {
+    // console.log("item", props.route.params.data);
+    let params = {
+      ...props.route.params.data,
+      chat: [{
+        createdAt: new Date().getTime(),
+        email: "m123@yopmail.com",
+        message: 'hi'
+      }]
+    }
+    console.log("params",params);
+    firestore()
+      .collection("GROUP")
+      .doc(props.route.params.data?.createdAt + 'group')
+      .update(params)
+      .then(() => console.log('Data updated.'))
+      .catch(err => {
+        console.log("error", err);
+      })
+  }
+
   async function handleSend(messages) {
     firestore().collection("THREADS").doc(thread).collection("MESSAGES").add({
       messages,
@@ -106,7 +127,12 @@ const ChatScreen = (props) => {
         <Pressable
           onPress={() => {
             if (message.length != 0) {
-              handleSend(message);
+              console.log("props.route.params.data.group",props.route);
+              if (!props.route.params.group) {
+                handleSend(message);
+              } else {
+                handleGroupSend(message)
+              }
             }
           }}
           style={{ padding: 15 }}

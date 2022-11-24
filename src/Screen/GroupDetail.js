@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     FlatList,
     View,
@@ -7,10 +7,41 @@ import {
     Pressable,
     Text
 } from 'react-native';
+import firestore from "@react-native-firebase/firestore";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const GroupDetail = props => {
+
+    const [members, setmembers] = useState(props.route.params.data.members)
+    const [currentUser, setcurrentUser] = useState('')
+
+
+    useEffect(() => {
+        getcurrentUSer()
+    }, [])
+
+    async function getcurrentUSer() {
+        AsyncStorage.getItem('user').then(val => {
+            setcurrentUser(val)
+        })
+    }
+
+    async function removeUser(item) {
+
+        console.log("item", props.route.params.data);
+        let params = {
+            ...props.route.params.data,
+            members: members
+        }
+        firestore()
+            .collection("GROUP")
+            .doc(params?.createdAt + 'group')
+            .update(params)
+            .then(() => console.log('Data updated.'));
+    }
+
     function renderHeader() {
         return (
             <View style={styles.space}>
@@ -25,28 +56,42 @@ const GroupDetail = props => {
         );
     }
 
+
+    const remove = (item) => {
+        console.log("item", item);
+        if (props.route.params.data.adminEmail == currentUser) {
+            if (members.length != 1) {
+                let m = members.filter(e => e != item)
+                setmembers(m)
+                removeUser(item)
+            } else {
+                alert('minimum 1 member required in group')
+            }
+        } else {
+            alert('Only admin make these action!')
+        }
+
+    }
+
     function renderList() {
         return (
             <View>
                 <Pressable
-                    onPress={() => {
-
-                    }}
+                    
                     style={{ padding: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ color: 'white', alignSelf: 'center' }}>{props.route.params.data.adminEmail}</Text>
                     <Text style={{ color: 'white', alignSelf: 'center' }}>Admin</Text>
                 </Pressable>
 
                 <FlatList
-                    data={props.route.params.data.members}
+                    data={members}
                     renderItem={({ item }) => {
                         return (
                             <View
-
                                 style={{ padding: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Text style={{ color: 'white', alignSelf: 'center' }}>{item}</Text>
                                 <Pressable onPress={() => {
-                                    alert('in progresss')
+                                    remove(item)
                                 }}>
                                     <Ionicons name={"close-circle"} color={"white"} size={30} />
                                 </Pressable>

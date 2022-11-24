@@ -97,12 +97,12 @@ const GetUserList = (props) => {
             ItemSeparatorComponent={() => (
                 <View style={{ height: 1, backgroundColor: 'grey' }} />
             )}
-            ListEmptyComponent={() => (<Text style={{color : 'black',alignSelf:'center'}}>No users Found!</Text>)}
+            ListEmptyComponent={() => (<Text style={{ color: 'black', alignSelf: 'center' }}>No users Found!</Text>)}
             renderItem={({ item }) => {
                 return (
                     <Pressable
                         onPress={() => {
-                            props.navigation.navigate("ChatScreen", { user: item.email });
+                            props.navigation.navigate("ChatScreen", { user: item.email, group: false, data: item });
                         }}
                         style={{ padding: 10 }}>
                         <Text style={{ color: 'black' }}>{item.email}</Text>
@@ -120,13 +120,16 @@ const GetUserList = (props) => {
             ItemSeparatorComponent={() => (
                 <View style={{ height: 1, backgroundColor: 'grey' }} />
             )}
-            ListEmptyComponent={() => (<Text style={{color : 'black',alignSelf:'center'}}>No Groups Found!</Text>)}
+            ListEmptyComponent={() => (<Text style={{ color: 'black', alignSelf: 'center' }}>No Groups Found!</Text>)}
             renderItem={({ item }) => {
                 console.log("item", item);
                 return (
                     <Pressable
                         onPress={() => {
-                            props.navigation.navigate("ChatScreen", { user: item.name ,group : true,data : item});
+                            props.navigation.navigate("ChatScreen", {
+                                user: item.name, group: true,
+                                data: item
+                            });
                             // alert('working on that')
                         }}
                         style={{ padding: 10 }}>
