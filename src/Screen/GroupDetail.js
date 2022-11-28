@@ -28,18 +28,23 @@ const GroupDetail = props => {
         })
     }
 
-    async function removeUser(item) {
+    async function removeUser(m) {
 
-        console.log("item", props.route.params.data);
+
         let params = {
             ...props.route.params.data,
-            members: members
+            members: m
         }
-        firestore()
+
+        console.log("item===", params);
+
+        let data = firestore()
             .collection("GROUP")
-            .doc(params?.createdAt + 'group')
-            .update(params)
-            .then(() => console.log('Data updated.'));
+            .doc(props.route.params.data?.createdAt + 'group')
+
+        console.log("data", data);
+        // .update(params)
+        // .then(() => console.log('Data updated.'));
     }
 
     function renderHeader() {
@@ -51,7 +56,6 @@ const GroupDetail = props => {
                     </Pressable>
                     <Text style={styles.btntxtlabel}>{props.route.params?.data.name}</Text>
                 </View>
-
             </View>
         );
     }
@@ -61,9 +65,14 @@ const GroupDetail = props => {
         console.log("item", item);
         if (props.route.params.data.adminEmail == currentUser) {
             if (members.length != 1) {
-                let m = members.filter(e => e != item)
-                setmembers(m)
-                removeUser(item)
+                const index = members.indexOf(item);
+
+                const x = members.splice(index, 1);
+
+                console.log("members", index, x, members);
+
+                setmembers(x)
+                removeUser(x)
             } else {
                 alert('minimum 1 member required in group')
             }
@@ -77,7 +86,7 @@ const GroupDetail = props => {
         return (
             <View>
                 <Pressable
-                    
+
                     style={{ padding: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ color: 'white', alignSelf: 'center' }}>{props.route.params.data.adminEmail}</Text>
                     <Text style={{ color: 'white', alignSelf: 'center' }}>Admin</Text>
