@@ -27,9 +27,6 @@ const GetUserList = (props) => {
     ]);
 
     useEffect(() => {
-        getUserList()
-        getGroups()
-        getcurrentUSer()
 
         const unsubscribe = props.navigation.addListener('focus', () => {
             getUserList()
@@ -56,10 +53,13 @@ const GetUserList = (props) => {
         const messagesListener = firestore()
             .collection("USERS")
             .onSnapshot((querySnapshot) => {
-                const messages = querySnapshot.docs.map((doc) => doc.data().data);
-                console.log("querySnapshot", messages);
-
-                setMessages(messages);
+                if(querySnapshot){
+                    const messages = querySnapshot?.docs.map((doc) => doc.data());
+                    console.log("querySnapshot", messages,querySnapshot);
+    
+                    setMessages(messages);
+                }
+               
             });
 
         return messagesListener;
@@ -70,10 +70,13 @@ const GetUserList = (props) => {
         const messagesListener = firestore()
             .collection("GROUP")
             .onSnapshot((querySnapshot) => {
-                const messages = querySnapshot.docs.map((doc) => doc.data());
-                console.log("getGroups", messages);
-
-                setgroups(messages);
+                if(querySnapshot){
+                    const messages = querySnapshot?.docs.map((doc) => doc.data());
+                    console.log("getGroups", querySnapshot);
+    
+                    setgroups(messages);
+                }
+              
             });
 
         return messagesListener;
@@ -102,10 +105,10 @@ const GetUserList = (props) => {
                 return (
                     <Pressable
                         onPress={() => {
-                            props.navigation.navigate("ChatScreen", { user: item.email, group: false, data: item });
+                            props.navigation.navigate("ChatScreen", { user: item.data.email, group: false, data: item.data });
                         }}
                         style={{ padding: 10 }}>
-                        <Text style={{ color: 'black' }}>{item.email}</Text>
+                        <Text style={{ color: 'black' }}>{item.data.email}</Text>
                     </Pressable>
                 )
             }}
@@ -113,10 +116,9 @@ const GetUserList = (props) => {
 
     );
 
-
     const SecondRoute = () => (
         <FlatList
-            data={groups.filter(e => e.adminEmail == currentUser)}
+            data={  groups.filter(e => e.adminEmail == currentUser) || []}
             ItemSeparatorComponent={() => (
                 <View style={{ height: 1, backgroundColor: 'grey' }} />
             )}

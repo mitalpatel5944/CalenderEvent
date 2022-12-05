@@ -32,14 +32,19 @@ const ChatScreen = (props) => {
     })
   }
 
+  // if
+  //         request.time < timestamp.date(2022, 11, 29);
+
   function getmessages() {
     const messagesListener = firestore()
       .collection("THREADS")
       .onSnapshot((querySnapshot) => {
-        const messages = querySnapshot.docs.map((doc) => doc.data().data);
-        console.log("querySnapshot===", messages, querySnapshot);
+        if (querySnapshot) {
+          const messages = querySnapshot.docs.map((doc) => doc.data().data);
+          console.log("querySnapshot===", messages, querySnapshot);
+          setMessages(messages);
+        }
 
-        setMessages(messages);
       });
     setTimeout(() => {
       scrollViewRef?.current?.scrollToEnd({ animated: true });
@@ -58,10 +63,10 @@ const ChatScreen = (props) => {
         message: 'hi'
       }]
     }
-    console.log("params",params);
+    console.log("params", params);
     firestore()
       .collection("GROUP")
-      .doc(props.route.params.data?.createdAt + 'group')
+      .doc(props.route.params.data?.createdAt)
       .update(params)
       .then(() => console.log('Data updated.'))
       .catch(err => {
@@ -127,7 +132,7 @@ const ChatScreen = (props) => {
         <Pressable
           onPress={() => {
             if (message.length != 0) {
-              console.log("props.route.params.data.group",props.route);
+              console.log("props.route.params.data.group", props.route);
               if (!props.route.params.group) {
                 handleSend(message);
               } else {

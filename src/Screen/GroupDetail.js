@@ -22,6 +22,26 @@ const GroupDetail = props => {
         getcurrentUSer()
     }, [])
 
+
+    useEffect(() => {
+        const messagesListener = firestore()
+            .collection("GROUP")
+            .onSnapshot((querySnapshot) => {
+                console.log("getGroups", querySnapshot);
+                if (querySnapshot) {
+                    const messages = querySnapshot?.docs.map((doc) => doc.data());
+                    console.log("messages", messages);
+                    let a = messages.find(e => e.createdAt == props.route.params.data?.createdAt)
+                    console.log("messa", a);
+                    setmembers(a?.members)
+                }
+            });
+
+        return messagesListener;
+    }, [])
+
+
+
     async function getcurrentUSer() {
         AsyncStorage.getItem('user').then(val => {
             setcurrentUser(val)
@@ -38,13 +58,19 @@ const GroupDetail = props => {
 
         console.log("item===", params);
 
-        let data = firestore()
+        let data = await firestore()
             .collection("GROUP")
-            .doc(props.route.params.data?.createdAt + 'group')
+            .doc(props.route.params.data?.createdAt)
+            .update(params)
+            .then(res => {
+                console.log("res",res);
+                alert('User removed from group')
+            })
+            .catch(err => {
+                console.log("err",err);
+            })
 
-        console.log("data", data);
-        // .update(params)
-        // .then(() => console.log('Data updated.'));
+        console.log('Data updated.', data)
     }
 
     function renderHeader() {
@@ -66,13 +92,10 @@ const GroupDetail = props => {
         if (props.route.params.data.adminEmail == currentUser) {
             if (members.length != 1) {
                 const index = members.indexOf(item);
-
                 const x = members.splice(index, 1);
-
                 console.log("members", index, x, members);
-
-                setmembers(x)
-                removeUser(x)
+                // setmembers(members)
+                removeUser(members)
             } else {
                 alert('minimum 1 member required in group')
             }
