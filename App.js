@@ -26,6 +26,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import GetUserList from "./src/Screen/GetUserList";
 import CreateGroup from "./src/Screen/CreateGroup";
 import GroupDetail from "./src/Screen/GroupDetail"
+import ChatProfile from "./src/Screen/ChatProfile";
 
 const Stack = createNativeStackNavigator();
 
@@ -124,7 +125,7 @@ export default function App() {
             <Stack.Screen name="HomeScreen" component={HomeScreen} />
             <Stack.Screen name="CreateGroup" component={CreateGroup} />
             <Stack.Screen name="GroupDetail" component={GroupDetail} />
-            
+            <Stack.Screen name="ChatProfile" component={ChatProfile} />           
              <Stack.Screen name="ChatScreen" component={ChatScreen} />
             <Stack.Screen name="CalendarScreen" component={CalendarScreen} />
             <Stack.Screen name="AddEvent" component={AddEvent} />

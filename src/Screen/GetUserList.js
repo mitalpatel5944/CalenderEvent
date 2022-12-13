@@ -53,13 +53,13 @@ const GetUserList = (props) => {
         const messagesListener = firestore()
             .collection("USERS")
             .onSnapshot((querySnapshot) => {
-                if(querySnapshot){
+                if (querySnapshot) {
                     const messages = querySnapshot?.docs.map((doc) => doc.data());
-                    console.log("querySnapshot", messages,querySnapshot);
-    
+                    console.log("querySnapshot", messages, querySnapshot);
+
                     setMessages(messages);
                 }
-               
+
             });
 
         return messagesListener;
@@ -70,13 +70,13 @@ const GetUserList = (props) => {
         const messagesListener = firestore()
             .collection("GROUP")
             .onSnapshot((querySnapshot) => {
-                if(querySnapshot){
+                if (querySnapshot) {
                     const messages = querySnapshot?.docs.map((doc) => doc.data());
                     console.log("getGroups", querySnapshot);
-    
+
                     setgroups(messages);
                 }
-              
+
             });
 
         return messagesListener;
@@ -96,12 +96,13 @@ const GetUserList = (props) => {
     const FirstRoute = () => (
 
         <FlatList
-            data={message}
+            data={message.filter(e => e?.data?.email != currentUser)}
             ItemSeparatorComponent={() => (
                 <View style={{ height: 1, backgroundColor: 'grey' }} />
             )}
             ListEmptyComponent={() => (<Text style={{ color: 'black', alignSelf: 'center' }}>No users Found!</Text>)}
             renderItem={({ item }) => {
+                console.log("item", item);
                 return (
                     <Pressable
                         onPress={() => {
@@ -118,7 +119,7 @@ const GetUserList = (props) => {
 
     const SecondRoute = () => (
         <FlatList
-            data={  groups.filter(e => e.adminEmail == currentUser) || []}
+            data={groups.filter(e => e.adminEmail == currentUser || e.members.includes(currentUser)) || []}
             ItemSeparatorComponent={() => (
                 <View style={{ height: 1, backgroundColor: 'grey' }} />
             )}

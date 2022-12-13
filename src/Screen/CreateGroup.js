@@ -36,7 +36,7 @@ const CreateGroup = (props) => {
     function validate() {
         if (groupName.length == 0) {
             alert('Enter group name')
-        } else if (selected.length <= 1) {
+        } else if (selected.length < 1) {
             alert('At least 2 group member required!')
         } else {
             addGroup()
@@ -52,7 +52,7 @@ const CreateGroup = (props) => {
 
     async function addGroup() {
 
-let time = new Date().getTime() + 'group'
+        let time = new Date().getTime() + 'group'
         await firestore()
             .collection("GROUP")
             .doc(time)

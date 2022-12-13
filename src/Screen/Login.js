@@ -53,19 +53,20 @@ const Login = (props) => {
   }
 
   async function addUser() {
-    firestore().collection("USERS").doc().collection("INFO").add({
-      email: payload.email,
-      createdAt: new Date().getTime()
-    });
+    // firestore().collection("USERS").doc().collection("INFO").add({
+    //   email: payload.email,
+    //   createdAt: new Date().getTime()
+    // });
 
     await firestore()
       .collection("USERS")
-      .doc()
+      .doc(payload.email)
       .set(
         {
           data: {
             email: payload.email,
-            createdAt: new Date().getTime()
+            createdAt: new Date().getTime(),
+            blockUserList : []
           },
         },
         { merge: true }

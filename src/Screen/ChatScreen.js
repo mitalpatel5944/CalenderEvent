@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ChatScreen = (props) => {
   const [messages, setMessages] = useState([]);
+  const [groupList, setgroupList] = useState([]);
   const [message, setMessage] = useState([]);
   const [currentUser, setcurrentUser] = useState('')
   const thread = props.route.params.user;
@@ -22,7 +23,13 @@ const ChatScreen = (props) => {
 
   useEffect(() => {
     getcurrentUSer()
-    getmessages()
+    if (!props.route.params.group) {
+      getmessages()
+
+    } else {
+      getmessagesGROUP()
+
+    }
   }, []);
 
 
@@ -32,15 +39,13 @@ const ChatScreen = (props) => {
     })
   }
 
-  // if
-  //         request.time < timestamp.date(2022, 11, 29);
 
   function getmessages() {
     const messagesListener = firestore()
       .collection("THREADS")
       .onSnapshot((querySnapshot) => {
         if (querySnapshot) {
-          const messages = querySnapshot.docs.map((doc) => doc.data().data);
+          const messages = querySnapshot.docs.map((doc) => doc.data());
           console.log("querySnapshot===", messages, querySnapshot);
           setMessages(messages);
         }
@@ -53,17 +58,33 @@ const ChatScreen = (props) => {
     return () => messagesListener();
   }
 
-  async function handleGroupSend() {
-    // console.log("item", props.route.params.data);
+  function getmessagesGROUP() {
+    const messagesListener = firestore()
+      .collection("GROUP")
+      .onSnapshot((querySnapshot) => {
+        if (querySnapshot) {
+          const messages = querySnapshot.docs.map((doc) => doc.data());
+          let a = messages.find(e => e.name == props.route.params.data?.name)
+          setgroupList(a?.chat);
+        }
+      });
+    setTimeout(() => {
+      scrollViewRef?.current?.scrollToEnd({ animated: true });
+    }, 1000);
+    // Stop listening for updates whenever the component unmounts
+    return () => messagesListener();
+  }
+
+  async function handleGroupSend(message) {
+
     let params = {
       ...props.route.params.data,
-      chat: [{
+      chat: [...groupList, {
         createdAt: new Date().getTime(),
-        email: "m123@yopmail.com",
-        message: 'hi'
+        email: currentUser,
+        message: message
       }]
     }
-    console.log("params", params);
     firestore()
       .collection("GROUP")
       .doc(props.route.params.data?.createdAt)
@@ -72,31 +93,26 @@ const ChatScreen = (props) => {
       .catch(err => {
         console.log("error", err);
       })
+    setMessage("")
   }
 
   async function handleSend(messages) {
-    firestore().collection("THREADS").doc(thread).collection("MESSAGES").add({
+
+    let t = new Date().getTime()
+    let params = {
       messages,
-      createdAt: new Date().getTime(),
       from: currentUser,
-      to: props.route.params.user
-    });
-
-    await firestore()
+      to: props.route.params.user,
+      createdAt: t
+    }
+    firestore()
       .collection("THREADS")
-      .doc(thread?._id)
-      .set(
-        {
-          data: {
-            messages,
-            from: currentUser,
-            to: props.route.params.user,
-            createdAt: new Date().getTime(),
-          },
-        },
-        { merge: true }
-      );
-
+      .doc(t.toString())
+      .set(params)
+      .then(() => console.log('message sent'))
+      .catch(err => {
+        console.log("error", err);
+      })
     setMessage("");
   }
 
@@ -109,7 +125,15 @@ const ChatScreen = (props) => {
           </Pressable>
           <Text style={styles.btntxtlabel}>{props.route.params?.user}</Text>
         </View>
-        <Pressable onPress={() => props.navigation.navigate('GroupDetail', { data: props.route.params.data })}
+        <Pressable onPress={() => {
+          if (!props.route.params.group) {
+            props.navigation.navigate('ChatProfile', { data: props.route.params?.user })
+
+          } else {
+            props.navigation.navigate('GroupDetail', { data: props.route.params.data })
+          }
+
+        }}
           style={{ alignSelf: 'center', paddingRight: 20 }}
         >
           <Ionicons name={"information-circle"} color={"white"} size={30}
@@ -132,7 +156,6 @@ const ChatScreen = (props) => {
         <Pressable
           onPress={() => {
             if (message.length != 0) {
-              console.log("props.route.params.data.group", props.route);
               if (!props.route.params.group) {
                 handleSend(message);
               } else {
@@ -151,7 +174,7 @@ const ChatScreen = (props) => {
   function renderbody() {
     return (
       <FlatList
-        data={messages.filter(e => e.to == thread).sort((a, b) => a.createdAt - b.createdAt)}
+        data={messages.sort((a, b) => a.createdAt - b.createdAt)}
         ref={scrollViewRef}
         automaticallyAdjustKeyboardInsets
         style={{ height: "auto", marginBottom: 100 }}
@@ -162,11 +185,11 @@ const ChatScreen = (props) => {
           <Text style={styles.btntxtlabel}>No Messages!</Text>
         )}
         renderItem={({ item, index }) => {
-          console.log("item", item);
+         
           return (
             <View
               style={
-                item?.user == props.route.params?.user
+                item?.to == props.route.params?.user
                   ? styles.right
                   : styles.left
               }
@@ -182,10 +205,49 @@ const ChatScreen = (props) => {
     );
   }
 
+  function renderGroupBody() {
+    return (
+      <FlatList
+        data={groupList.sort((a, b) => a.createdAt - b.createdAt)}
+        ref={scrollViewRef}
+        automaticallyAdjustKeyboardInsets
+        style={{ height: "auto", marginBottom: 100 }}
+        onContentSizeChange={() =>
+          scrollViewRef?.current?.scrollToEnd({ animated: true })
+        }
+        ListEmptyComponent={() => (
+          <Text style={styles.btntxtlabel}>No Messages!</Text>
+        )}
+        renderItem={({ item, index }) => {
+          console.log("item", item);
+          return (
+            <View
+              style={
+                item?.email == currentUser
+                  ? styles.right
+                  : styles.left
+              }
+            >
+              <Text style={styles.user}>{item.email}</Text>
+
+              <Text style={styles.btntxt}>{item?.message}</Text>
+              <Text style={styles.smallTxt}>
+                {moment(item?.createdAt).format("hh:mm a")}
+              </Text>
+
+
+
+            </View>
+          );
+        }}
+      />
+    )
+  }
+
   return (
     <View style={styles.container}>
       {renderHeader()}
-      {renderbody()}
+      {!props.route.params.group ? renderbody() : renderGroupBody()}
       {renderTextInput()}
     </View>
   );
@@ -220,6 +282,7 @@ const styles = StyleSheet.create({
     padding: 2,
     margin: 5,
     paddingHorizontal: 10,
+
   },
   TextInput: {
     backgroundColor: "white",
@@ -246,6 +309,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
   },
+  user: {
+    color: 'purple',
+    fontWeight: 'bold',
+    alignSelf: 'center'
+  },
   btn2: {
     backgroundColor: "white",
     marginTop: 30,
@@ -253,7 +321,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
   },
-  btntxt: { color: "black", padding: 10, fontSize: 18, fontWeight: "bold" },
+  btntxt: {
+    color: "black", padding: 10, fontSize: 18,
+    fontWeight: "bold"
+  },
+
 });
 
 export default ChatScreen;
