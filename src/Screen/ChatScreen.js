@@ -12,14 +12,19 @@ import firestore from "@react-native-firebase/firestore";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
+
 
 const ChatScreen = (props) => {
   const [messages, setMessages] = useState([]);
   const [groupList, setgroupList] = useState([]);
   const [message, setMessage] = useState([]);
   const [currentUser, setcurrentUser] = useState('')
+  const [usersDetail, setUserDetail] = useState(null)
+  const [backgroundColor, setgestureName] = useState('#000000')
   const thread = props.route.params.user;
   const scrollViewRef = useRef();
+  const [swipeValue, setswipeValue] = useState('')
 
   useEffect(() => {
     getcurrentUSer()
@@ -36,6 +41,12 @@ const ChatScreen = (props) => {
   async function getcurrentUSer() {
     AsyncStorage.getItem('user').then(val => {
       setcurrentUser(val)
+      firestore()
+        .collection("USERS")
+        .doc(val)
+        .onSnapshot((querySnapshot) => {
+          setUserDetail(querySnapshot.data()?.data)
+        })
     })
   }
 
@@ -145,31 +156,81 @@ const ChatScreen = (props) => {
 
   function renderTextInput() {
     return (
-      <View style={[styles.row, { position: "absolute", bottom: 0 }]}>
-        <TextInput
-          value={message}
-          style={styles.TextInput}
-          onChangeText={(val) => {
-            setMessage(val);
-          }}
-        />
-        <Pressable
-          onPress={() => {
-            if (message.length != 0) {
-              if (!props.route.params.group) {
-                handleSend(message);
-              } else {
-                handleGroupSend(message)
-              }
-            }
-          }}
-          style={{ padding: 15 }}
+      <View style={{ position: "absolute", bottom: 0,width : '100%' }}>
+
+        {swipeValue.length != 0 && <View
+          style={[styles.TextInput,{flexDirection:'row',justifyContent:'space-between',width:'70%',marginLeft :30,marginBottom:-15}]}
         >
-          <MaterialIcons name={"send"} color={"white"} size={40} />
-        </Pressable>
+          <Text style={{ color: 'black' }}>{swipeValue}</Text>
+          <Pressable onPress={() => setswipeValue('')}>
+            <Ionicons name={"close"} color={"black"} size={30} />
+          </Pressable>
+        </View>}
+        <View style={[styles.row]}>
+          <TextInput
+            value={message}
+            style={styles.TextInput}
+            onChangeText={(val) => {
+              setMessage(val);
+            }}
+          />
+          <Pressable
+            onPress={() => {
+              if (message.length != 0) {
+                if (!props.route.params.group) {
+                  handleSend(message);
+                } else {
+                  handleGroupSend(message)
+                }
+              }
+            }}
+            style={{ padding: 15 }}
+          >
+            <MaterialIcons name={"send"} color={"white"} size={40} />
+          </Pressable>
+        </View>
       </View>
     );
   }
+
+  function onSwipe(gestureName, gestureState) {
+    const { SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT } = swipeDirections;
+    setgestureName(gestureName)
+    switch (gestureName) {
+      case SWIPE_UP:
+        setgestureName('red')
+
+        break;
+      case SWIPE_DOWN:
+        setgestureName('green')
+
+        break;
+      case SWIPE_LEFT:
+        setgestureName('blue')
+
+        break;
+      case SWIPE_RIGHT:
+        setgestureName('yellow')
+
+        break;
+    }
+  }
+
+  function onSwipeLeft(gestureState) {
+    console.log('You swiped left!');
+    setswipeValue(gestureState)
+  }
+
+  function onSwipeRight(gestureState) {
+    console.log('You swiped right!');
+    setswipeValue(gestureState)
+
+  }
+
+  const config = {
+    velocityThreshold: 0.3,
+    directionalOffsetThreshold: 80
+  };
 
   function renderbody() {
     return (
@@ -185,7 +246,6 @@ const ChatScreen = (props) => {
           <Text style={styles.btntxtlabel}>No Messages!</Text>
         )}
         renderItem={({ item, index }) => {
-         
           return (
             <View
               style={
@@ -194,11 +254,23 @@ const ChatScreen = (props) => {
                   : styles.left
               }
             >
-              <Text style={styles.btntxt}>{item?.messages}</Text>
-              <Text style={styles.smallTxt}>
-                {moment(item?.createdAt).format("hh:mm a")}
-              </Text>
+              <GestureRecognizer
+                onSwipe={(direction, state) => onSwipe(direction, state)}
+                onSwipeLeft={(state) => onSwipeLeft(item?.messages)}
+                onSwipeRight={(state) => onSwipeRight(item?.messages)}
+                config={config}
+                style={{
+                  // flex: 1,
+                  // backgroundColor: backgroundColor
+                }}
+              >
+                <Text style={styles.btntxt}>{item?.messages}</Text>
+                <Text style={styles.smallTxt}>
+                  {moment(item?.createdAt).format("hh:mm a")}
+                </Text>
+              </GestureRecognizer>
             </View>
+
           );
         }}
       />
@@ -244,11 +316,20 @@ const ChatScreen = (props) => {
     )
   }
 
+  function renderBlock() {
+    return (
+      <Text style={styles.btntxtlabel}>USER BLOCKED</Text>
+
+    )
+  }
+
   return (
     <View style={styles.container}>
       {renderHeader()}
       {!props.route.params.group ? renderbody() : renderGroupBody()}
-      {renderTextInput()}
+      {usersDetail && usersDetail?.blockUserList.filter(e => e == props.route.params?.user).length == 0 ?
+        renderTextInput() :
+        renderBlock()}
     </View>
   );
 };
@@ -287,7 +368,7 @@ const styles = StyleSheet.create({
   TextInput: {
     backgroundColor: "white",
     color: "black",
-    padding: 20,
+    padding: 10,
     borderRadius: 10,
     fontSize: 20,
     width: "85%",

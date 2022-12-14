@@ -42,15 +42,8 @@ const ChatProfile = props => {
 
     }
 
-    async function blackUserChange() {
-        let am = usersDetail.blockUserList.concat(members)
-        let params = {
-            data: {
-                ...usersDetail,
-                blockUserList: am
-            }
+    async function blackUserChange(params) {
 
-        }
         firestore()
             .collection("USERS")
             .doc(currentUser)
@@ -63,8 +56,41 @@ const ChatProfile = props => {
 
     function blockUser() {
         if (usersDetail.blockUserList.filter(e => e == members).length != 0) {
-            alert('User is already blocked')
+
+            Alert.alert(
+                "Alert",
+                "User is already blocked. Are you sure to unblock user?",
+                [
+                    {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                    {
+                        text: "OK", onPress: () => {
+                            let am = usersDetail.blockUserList.filter(e => e != members)
+                            let params = {
+                                data: {
+                                    ...usersDetail,
+                                    blockUserList: am
+                                }
+
+                            }
+                            blackUserChange(params)
+                        }
+                    }
+                ]
+            );
+
         } else {
+            let am = usersDetail.blockUserList.concat(members)
+            let params = {
+                data: {
+                    ...usersDetail,
+                    blockUserList: am
+                }
+
+            }
             Alert.alert(
                 "Alert",
                 "Are you sure ?",
@@ -74,7 +100,7 @@ const ChatProfile = props => {
                         onPress: () => console.log("Cancel Pressed"),
                         style: "cancel"
                     },
-                    { text: "OK", onPress: () => blackUserChange() }
+                    { text: "OK", onPress: () => blackUserChange(params) }
                 ]
             );
         }
