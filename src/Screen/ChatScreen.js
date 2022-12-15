@@ -10,10 +10,11 @@ import {
 import moment from "moment";
 import firestore from "@react-native-firebase/firestore";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Entypo from "react-native-vector-icons/Entypo"
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
-
+import ImagePicker from 'react-native-image-crop-picker';
 
 const ChatScreen = (props) => {
   const [messages, setMessages] = useState([]);
@@ -114,7 +115,8 @@ const ChatScreen = (props) => {
       messages,
       from: currentUser,
       to: props.route.params.user,
-      createdAt: t
+      createdAt: t,
+      swipeText: swipeValue
     }
     firestore()
       .collection("THREADS")
@@ -125,6 +127,17 @@ const ChatScreen = (props) => {
         console.log("error", err);
       })
     setMessage("");
+    setswipeValue('')
+  }
+
+  function openImagePicker() {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true
+    }).then(image => {
+      console.log(image);
+    });
   }
 
   function renderHeader() {
@@ -136,6 +149,16 @@ const ChatScreen = (props) => {
           </Pressable>
           <Text style={styles.btntxtlabel}>{props.route.params?.user}</Text>
         </View>
+        <Pressable onPress={() => {
+          openImagePicker()
+
+        }}
+          style={{ alignSelf: 'center', paddingRight: 20 }}
+        >
+          <Entypo name={"attachment"} color={"white"} size={30}
+          />
+        </Pressable>
+
         <Pressable onPress={() => {
           if (!props.route.params.group) {
             props.navigation.navigate('ChatProfile', { data: props.route.params?.user })
@@ -156,10 +179,10 @@ const ChatScreen = (props) => {
 
   function renderTextInput() {
     return (
-      <View style={{ position: "absolute", bottom: 0,width : '100%' }}>
+      <View style={{ position: "absolute", bottom: 0, width: '100%' }}>
 
         {swipeValue.length != 0 && <View
-          style={[styles.TextInput,{flexDirection:'row',justifyContent:'space-between',width:'70%',marginLeft :30,marginBottom:-15}]}
+          style={[styles.TextInput, { flexDirection: 'row', justifyContent: 'space-between', width: '70%', marginLeft: 30, marginBottom: -15 }]}
         >
           <Text style={{ color: 'black' }}>{swipeValue}</Text>
           <Pressable onPress={() => setswipeValue('')}>
@@ -246,6 +269,7 @@ const ChatScreen = (props) => {
           <Text style={styles.btntxtlabel}>No Messages!</Text>
         )}
         renderItem={({ item, index }) => {
+          console.log("item", item);
           return (
             <View
               style={
@@ -259,15 +283,17 @@ const ChatScreen = (props) => {
                 onSwipeLeft={(state) => onSwipeLeft(item?.messages)}
                 onSwipeRight={(state) => onSwipeRight(item?.messages)}
                 config={config}
-                style={{
-                  // flex: 1,
-                  // backgroundColor: backgroundColor
-                }}
+
               >
-                <Text style={styles.btntxt}>{item?.messages}</Text>
-                <Text style={styles.smallTxt}>
-                  {moment(item?.createdAt).format("hh:mm a")}
-                </Text>
+                {item?.swipeText && <View style={{ backgroundColor: "grey", borderTopRightRadius: 5, borderTopLeftRadius: 5, padding: 5 }}>
+                  <Text style={styles.btntxt2}>{item?.swipeText}</Text>
+                </View>}
+                <View style={{ paddingHorizontal: 10 }}>
+                  <Text style={styles.btntxt}>{item?.messages}</Text>
+                  <Text style={styles.smallTxt}>
+                    {moment(item?.createdAt).format("hh:mm a")}
+                  </Text>
+                </View>
               </GestureRecognizer>
             </View>
 
@@ -300,13 +326,26 @@ const ChatScreen = (props) => {
                   : styles.left
               }
             >
-              <Text style={styles.user}>{item.email}</Text>
+              <GestureRecognizer
+                onSwipe={(direction, state) => onSwipe(direction, state)}
+                onSwipeLeft={(state) => onSwipeLeft(item?.message)}
+                onSwipeRight={(state) => onSwipeRight(item?.message)}
+                config={config}
 
-              <Text style={styles.btntxt}>{item?.message}</Text>
-              <Text style={styles.smallTxt}>
-                {moment(item?.createdAt).format("hh:mm a")}
-              </Text>
+              >
+                <Text style={styles.user}>{item.email}</Text>
 
+                {item?.swipeText && <View style={{ backgroundColor: "grey", borderTopRightRadius: 5, borderTopLeftRadius: 5, padding: 5 }}>
+                  <Text style={styles.btntxt2}>{item?.swipeText}</Text>
+                </View>}
+                <View style={{ paddingHorizontal: 10 }}>
+
+                  <Text style={styles.btntxt}>{item?.message}</Text>
+                  <Text style={styles.smallTxt}>
+                    {moment(item?.createdAt).format("hh:mm a")}
+                  </Text>
+                </View>
+              </GestureRecognizer>
 
 
             </View>
@@ -352,17 +391,17 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     backgroundColor: "white",
     borderRadius: 10,
-    padding: 2,
+    // padding: 2,
     margin: 5,
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
   },
   right: {
     alignSelf: "flex-end",
     backgroundColor: "white",
     borderRadius: 10,
-    padding: 2,
+    // padding: 2,
     margin: 5,
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
 
   },
   TextInput: {
@@ -403,8 +442,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   btntxt: {
-    color: "black", padding: 10, fontSize: 18,
+    color: "black", fontSize: 18,
+    paddingHorizontal: 4,
     fontWeight: "bold"
+  },
+  btntxt2: {
+    color: "black", fontSize: 16,
+    paddingHorizontal: 4,
   },
 
 });
