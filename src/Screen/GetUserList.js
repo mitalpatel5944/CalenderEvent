@@ -86,7 +86,7 @@ const GetUserList = (props) => {
                     }}
                     size={30}
                     onPress={() => {
-                        
+
                     }}
                 />
                 <Pressable
@@ -95,7 +95,6 @@ const GetUserList = (props) => {
                         Signout();
                     }}
                 >
-
                     <AntDesign
                         name={'logout'}
                         style={{
