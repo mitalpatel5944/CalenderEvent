@@ -19,7 +19,6 @@ import Login from "./src/Screen/Login";
 import HomeScreen from "./src/Screen/HomeScreen";
 import ChatScreen from "./src/Screen/ChatScreen";
 import SelectCountry from "./src/Screen/SelectCountry";
-import RatingScreen from "./src/Screen/Rating";
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -118,7 +117,6 @@ export default function App() {
             initialRouteName={!isLogin ? 'SelectApp' : 'GetUserList' }
           >
             <Stack.Screen name="SelectCountry" component={SelectCountry} />
-            <Stack.Screen name="RatingScreen" component={RatingScreen} />
             <Stack.Screen name="GetUserList" component={GetUserList} />
             <Stack.Screen name="SelectApp" component={SelectApp} />
             <Stack.Screen name="Login" component={Login} />

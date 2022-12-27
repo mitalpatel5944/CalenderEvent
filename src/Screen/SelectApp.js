@@ -5,22 +5,7 @@ const SelectApp = (props) => {
   return (
     <View style={styles.container}>
       
-      <Pressable
-        style={styles.btn}
-        onPress={() => {
-          props.navigation.navigate("SelectCountry");
-        }}
-      >
-        <Text style={styles.btntxt}>Covid Data</Text>
-      </Pressable>
-      <Pressable
-        style={styles.btn2}
-        onPress={() => {
-          props.navigation.navigate("RatingScreen");
-        }}
-      >
-        <Text style={styles.btntxt}>Rating</Text>
-      </Pressable>
+      
 
       <Pressable
         style={styles.btn2}
@@ -31,14 +16,7 @@ const SelectApp = (props) => {
         <Text style={styles.btntxt}>Chat App</Text>
       </Pressable>
 
-      <Pressable
-        style={styles.btn2}
-        onPress={() => {
-          props.navigation.navigate("CalendarScreen");
-        }}
-      >
-        <Text style={styles.btntxt}>Calender Event App</Text>
-      </Pressable>
+  
     </View>
   );
 };
@@ -46,7 +24,7 @@ const SelectApp = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000000",
+    backgroundColor: "white",
     justifyContent: "center",
   },
   btn: {
@@ -56,13 +34,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   btn2: {
-    backgroundColor: "white",
+    backgroundColor: "black",
     marginTop: 30,
     marginHorizontal: 30,
     alignItems: "center",
     borderRadius: 10,
   },
-  btntxt: { color: "black", padding: 20, fontSize: 18, fontWeight: "bold" },
+  btntxt: { color: "white", padding: 20, fontSize: 18, fontWeight: "bold" },
 });
 
 export default SelectApp;
