@@ -1,4 +1,4 @@
-package com.calenderevent;
+package com.messanger;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -12,7 +12,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "CalenderEvent";
+    return "Messanger";
   }
 
   /**

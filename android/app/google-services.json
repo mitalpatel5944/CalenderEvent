@@ -76,6 +76,42 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:729005262440:android:2fd285f39dd6c707625ddd",
+        "android_client_info": {
+          "package_name": "com.messanger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "729005262440-t20bijaun9b3i5agp2sd8ljssm5v8mvi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGwd_DNmaH5SccYKCEXadw2YV62Gr4zSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "729005262440-t20bijaun9b3i5agp2sd8ljssm5v8mvi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "729005262440-1q8sh3avv0nr42qlbg3436nubm4b35b6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.CalenderEvent"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

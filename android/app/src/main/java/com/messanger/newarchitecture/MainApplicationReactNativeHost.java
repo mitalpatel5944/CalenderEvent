@@ -1,4 +1,4 @@
-package com.calenderevent.newarchitecture;
+package com.messanger.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.calenderevent.BuildConfig;
-import com.calenderevent.newarchitecture.components.MainComponentsRegistry;
-import com.calenderevent.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.messanger.BuildConfig;
+import com.messanger.newarchitecture.components.MainComponentsRegistry;
+import com.messanger.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

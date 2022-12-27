@@ -1,4 +1,4 @@
-package com.calenderevent.newarchitecture.components;
+package com.messanger.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
