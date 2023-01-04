@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, useWindowDimensions, Pressable, FlatList, TextInput } from "react-native";
+import { Text, View, StyleSheet, useWindowDimensions, Pressable, FlatList, TextInput, Linking, TouchableOpacity } from "react-native";
 import auth from "@react-native-firebase/auth";
 
 import firestore from "@react-native-firebase/firestore";
@@ -79,15 +79,16 @@ const GetUserList = (props) => {
 
 
                 <AntDesign
+                    onPress={() => {
+                        Linking.openURL('mychat://')
+                    }}
                     name={'message1'}
                     style={{
                         color: 'black',
                         padding: 20
                     }}
                     size={30}
-                    onPress={() => {
-                        
-                    }}
+
                 />
                 <Pressable
                     style={styles.btn2}
@@ -122,6 +123,30 @@ const GetUserList = (props) => {
             />
 
 
+            <TouchableOpacity
+                onPress={() => {
+                    let t = new Date().getTime()
+                    let params = {
+                        messages: value,
+                        from: currentUser,
+                        to: 'm1@yopmail.com',
+                        createdAt: t,
+                        swipeText: ''
+                    }
+                    firestore()
+                        .collection("THREADS")
+                        .doc(t.toString())
+                        .set(params)
+                        .then(() => console.log('message sent'))
+                        .catch(err => {
+                            console.log("error", err);
+                        })
+                    setvalue("");
+                }}
+
+                style={{ borderWidth: 1, margin: 10, padding: 10, justifyContent: 'center' }}>
+                <Text style={styles.btntxtlabel}>Send</Text>
+            </TouchableOpacity>
 
 
         </View>

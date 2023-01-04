@@ -9,12 +9,8 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, SafeAreaView } from "react-native";
 
-import { createStackNavigator } from "@react-navigation/stack";
-import CalendarScreen from "./src/Screen/CalendarScreen";
-import AddEvent from "./src/Screen/AddEvent";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SelectApp from "./src/Screen/SelectApp";
 import Login from "./src/Screen/Login";
 import HomeScreen from "./src/Screen/HomeScreen";
 import ChatScreen from "./src/Screen/ChatScreen";
@@ -23,8 +19,6 @@ import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GetUserList from "./src/Screen/GetUserList";
-import CreateGroup from "./src/Screen/CreateGroup";
-import GroupDetail from "./src/Screen/GroupDetail"
 import ChatProfile from "./src/Screen/ChatProfile";
 
 const Stack = createNativeStackNavigator();
@@ -118,15 +112,10 @@ export default function App() {
           >
             <Stack.Screen name="SelectCountry" component={SelectCountry} />
             <Stack.Screen name="GetUserList" component={GetUserList} />
-            <Stack.Screen name="SelectApp" component={SelectApp} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="HomeScreen" component={HomeScreen} />
-            <Stack.Screen name="CreateGroup" component={CreateGroup} />
-            <Stack.Screen name="GroupDetail" component={GroupDetail} />
             <Stack.Screen name="ChatProfile" component={ChatProfile} />           
              <Stack.Screen name="ChatScreen" component={ChatScreen} />
-            <Stack.Screen name="CalendarScreen" component={CalendarScreen} />
-            <Stack.Screen name="AddEvent" component={AddEvent} />
           </Stack.Navigator>
         </NavigationContainer>}
     </SafeAreaView>
